@@ -202,7 +202,7 @@
   // Ticker
   const facts = ['University of Toronto · Finance Specialist','Indonesia Maju 4 Scholar','DCF Modelling · FactSet · Excel','Bloomberg Finance Fundamentals','Wavery Consulting · London','ACE UTM · Chapter Development Director','Semi-Finalist · ITB x Zurich Insurance','Gold Medal · Biology Olympiad Indonesia','Python Data Analysis · CFI BIDA'];
   const track = document.getElementById('ticker');
-  track.innerHTML = facts.concat(facts).map(f=>`<span class="ticker-item"><strong>-</strong> ${f}</span>`).join('') + facts.concat(facts).map(f=>`<span class="ticker-item"><strong>-</strong> ${f}</span>`).join('');
+  track.innerHTML = facts.concat(facts).map(f=>`<span class="ticker-item"><strong>&bull;</strong> ${f}</span>`).join('') + facts.concat(facts).map(f=>`<span class="ticker-item"><strong>&bull;</strong> ${f}</span>`).join('');
 </script>
 </body>
 </html>
