@@ -27,9 +27,10 @@ nav {
   position:fixed; top:0; left:0; right:0; z-index:500;
   display:flex; align-items:center; justify-content:space-between;
   padding:1.1rem 4rem;
-  transition:background .3s,box-shadow .3s;
+  background:rgba(255,255,255,.95); backdrop-filter:blur(16px);
+  transition:box-shadow .3s;
 }
-nav.scrolled { background:rgba(255,255,255,.95); backdrop-filter:blur(16px); box-shadow:0 1px 0 var(--border); }
+nav.scrolled { box-shadow:0 1px 0 var(--border); }
 .nav-name { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:600; color:var(--navy); text-decoration:none; letter-spacing:.01em; }
 .nav-links { display:flex; gap:1.8rem; list-style:none; flex-wrap:wrap; }
 .nav-links a { font-size:.73rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); text-decoration:none; font-weight:500; transition:color .2s; }

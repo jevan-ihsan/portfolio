@@ -54,11 +54,6 @@
       <p>Additionally, I’m also active in several leadership roles and clubs. For example, my work as an associate at PERMIKA Toronto, an Indonesian student body across the GTA, has brought an innovative outcome by optimizing workflow efficiency and data automation by ~50% and led a networking flagship event that gathered 40% more interest and satisfaction. Other than that, at DEMA, I unlocked my abilities to discover AI transformation in the blog I wrote for DEMA’s content. This was followed by a discovery day with Microsoft, which fundamentally changed my perspective on AI across various business lines that Microsoft has assisted its clients with.</p>
       <p>And for sidequesting, I’m still completely new in this area and actively exploring options, including swimming, running, and weightlifting. My ultimate bucket list is to explore the world while doing memorable sidequests essential for my mental health and brain development. For example, I wanted to try and learn skydiving, bungee jumping, snowboarding, open-water swimming, and more. Wish me the best of luck so that I can accomplish my bucket list and have the best story I can tell to people!</p>
       <p>Though my life journey is incomplete and many steps to go, I always carry my values I believe. Thoughtful collaboration, critical thinking, empathy, and accountability are the keys for this world to keep rotating. Therefore, I’m always open to new learning opportunities, challenges, and interesting conversations. Click contact to connect:)</p>
-      <div class="about-stats">
-        <div><div class="stat-num" data-target="8">0</div><div class="stat-lbl">Roles &amp; Positions</div></div>
-        <div><div class="stat-num" data-target="6">0</div><div class="stat-lbl">Awards &amp; Medals</div></div>
-        <div><div class="stat-num" data-target="200" data-suf="+">0</div><div class="stat-lbl">Students impacted</div></div>
-      </div>
     </div>
   </div>
 
@@ -90,9 +85,6 @@
   document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='../about/')a.classList.add('active');});
   const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}});},{threshold:.1});
   document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
-  function animNum(el){const t=parseFloat(el.dataset.target),dec=parseInt(el.dataset.dec||0),suf=el.dataset.suf||'';const dur=1700,s=performance.now();(function step(now){const p=Math.min((now-s)/dur,1),e=p<.5?2*p*p:-1+(4-2*p)*p;el.textContent=dec?(e*t).toFixed(dec)+suf:Math.floor(e*t)+suf;if(p<1)requestAnimationFrame(step);})(s);}
-  const co=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('[data-target]').forEach(animNum);co.unobserve(e.target);}});},{threshold:.3});
-  const statsEl=document.querySelector('.about-stats');if(statsEl)co.observe(statsEl);
 </script>
 </body>
 </html>
