@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Part 2 - Loading & Cleaning · Jevan Hava Maula Ihsan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles.css"/>
+</head>
+<body>
+<div id="prog"></div>
+<nav id="nav">
+  <a class="nav-name" href="../">Jevan Hava Maula Ihsan</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="../about/">About</a></li>
+    <li><a href="../work/">Work</a></li>
+    <li><a href="../leadership/">Leadership</a></li>
+    <li><a href="../projects/">Projects</a></li>
+    <li><a href="../social-projects/">Social Projects</a></li>
+    <li><a href="../awards/">Awards</a></li>
+    <li><a href="../skills/">Skills</a></li>
+    <li><a href="../#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <a class="page-breadcrumb" href="../project-python/">Python Project</a>
+    <div class="page-eyebrow">Part 02 of 04</div>
+    <h1 class="page-title">Loading & Cleaning Data</h1>
+    <p class="page-subtitle">Introduction to NumPy/Pandas, loading local and API data, and setting up a clean dataset pipeline.</p>
+  </div>
+</div>
+
+<div class="part-tabs">
+  <a href="../python-part1/">01 · Intro Python</a>
+  <a href="../python-part2/" class="active">02 · Loading & Cleaning</a>
+  <a href="../python-part3/">03 · Data Analysis</a>
+  <a href="../python-part4/">04 · Visualization</a>
+</div>
+
+<div class="part-page">
+
+  <p>This part focuses on importing data and cleaning it up. I pulled stock prices from online APIs and cleaned up messy local transaction files. In this section, I learned to:</p>
+  <ul>
+    <li><strong>Standardize tables:</strong> Rename columns for consistency and cast data to the correct types.</li>
+    <li><strong>Handle missing data:</strong> Fill gaps using forward-fills for time-series data or medians to avoid skewing the dataset.</li>
+    <li><strong>Clean duplicates and text:</strong> Drop duplicate rows and split text strings into separate columns.</li>
+  </ul>
+
+  <div class="sidebar-toc" id="sidebar-toc">
+    <div class="toc-header">
+      <span class="toc-title">Table of Contents</span>
+      <button class="toc-toggle" id="toc-toggle-btn" aria-label="Toggle TOC">
+        <span class="toc-toggle-icon">&minus;</span>
+      </button>
+    </div>
+    <div class="toc-body">
+      <ul class="toc-list">
+        <li><a href="#notebook-1-introduction-to-numpy-and-pandas">Notebook 1: Introduction to NumPy & Pandas</a></li>
+        <li><a href="#notebook-2-loading-data">Notebook 2: Loading Data</a></li>
+        <li><a href="#notebook-3-cleaning-data">Notebook 3: Cleaning Data</a></li>
+        <li><a href="#chapter-1-exercise-loading-and-cleaning-at-scale-1000-rows">Chapter 1 Exercise: Loading & Cleaning at Scale (1,000 Rows)</a></li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    document.getElementById('toc-toggle-btn').addEventListener('click', () => {
+      const toc = document.getElementById('sidebar-toc');
+      const icon = document.querySelector('.toc-toggle-icon');
+      toc.classList.toggle('collapsed');
+      if (toc.classList.contains('collapsed')) {
+        icon.innerHTML = '&#43;';
+      } else {
+        icon.innerHTML = '&minus;';
+      }
+    });
+  </script>
+
+  <hr/>
+
+  <h2 id="notebook-1-introduction-to-numpy-and-pandas">Notebook 1: Introduction to NumPy & Pandas</h2>
+
+  <p>This notebook introduces the fundamentals of NumPy arrays (for vectorised calculations) and Pandas Series/DataFrames (which label indexes).</p>
+
+  <h3>1. Import NumPy</h3>
+
+  <pre><code>import numpy as np</code></pre>
+
+  <h3>2. Create 1D array</h3>
+
+  <pre><code>np.array([0,1,2])</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([0, 1, 2])</div>
+
+  </div>
+
+  <h3>3. Create 2D array</h3>
+
+  <pre><code>Array_1 = np.array([[1,2,3],[4,5,6]])
+Array_1</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([[1, 2, 3],
+       [4, 5, 6]])</div>
+
+  </div>
+
+  <h3>4. Mixed Types Array (Type Coercion)</h3>
+
+  <p>When lists containing different types are passed to <code>np.array</code>, elements are coerced into a single compatible type (usually strings).</p>
+
+  <pre><code>Array_2 = np.array([[1,2,3],['a',5,6]])
+Array_2</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([['1', '2', '3'],
+       ['a', '5', '6']], dtype='&lt;U11')</div>
+
+  </div>
+
+  <h3>5. Check Array Shape</h3>
+
+  <pre><code>Array_1.shape</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">(2, 3)</div>
+
+  </div>
+
+  <h3>6. NumPy Min & Max</h3>
+
+  <pre><code>print(Array_1.min())
+print(Array_1.max())</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">1
+6</div>
+
+  </div>
+
+  <h3>7. 2D Indexing & Slicing</h3>
+
+  <p>Index using <code>[row_index, col_index]</code>.</p>
+
+  <pre><code># Second row, first column
+Array_1[1,0]</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">4</div>
+
+  </div>
+
+  <h3>8. Import Pandas</h3>
+
+  <pre><code>import pandas as pd</code></pre>
+
+  <h3>9. Pandas Series from List (Default Index)</h3>
+
+  <pre><code>list_1 = [12,24,36]
+pd.Series(data=list_1)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">0    12
+1    24
+2    36
+dtype: int64</div>
+
+  </div>
+
+  <h3>10. Pandas Series from List (Custom Index Labels)</h3>
+
+  <pre><code>markers = ['a','b','c']
+pd.Series(data=list_1, index = markers)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">a    12
+b    24
+c    36
+dtype: int64</div>
+
+  </div>
+
+  <h3>11. Mixed Data Types Series</h3>
+
+  <pre><code>a = 'Mike'
+b = True
+c = sum
+pd.Series([a,b,c])</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">0                       Mike
+1                       True
+2    &lt;built-in function sum&gt;
+dtype: object</div>
+
+  </div>
+
+  <h3>12. Indexing Series by Name</h3>
+
+  <pre><code>salesQ1 = pd.Series(
+    data=[300,550,240,180],
+    index = ['Magnets','Coasters','Handbags','Snacks']
+)
+salesQ1['Magnets']</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">300</div>
+
+  </div>
+
+  <h3>13. Adding two Pandas Series</h3>
+
+  <p>Adding series automatically aligns indices.</p>
+
+  <pre><code>salesQ2 = pd.Series(
+    data = [340,600,225,75],
+    index = ['Magnets', 'Coasters','Handbags', 'Snacks']
+)
+salesQ1 + salesQ2</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Magnets      640
+Coasters    1150
+Handbags     465
+Snacks       255
+dtype: int64</div>
+
+  </div>
+
+  <h3>14. Adding Series with Mismatched Indexes</h3>
+
+  <p>Missing alignments result in <code>NaN</code> (Not a Number).</p>
+
+  <pre><code>salesQ3 = pd.Series(
+    data = [480,520,360,40],
+    index = ['Magnets', 'Coasters','Handbags', 'Postcards']
+)
+salesQ1 + salesQ2 + salesQ3</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Coasters     1670.0
+Handbags      825.0
+Magnets      1120.0
+Postcards       NaN
+Snacks          NaN
+dtype: float64</div>
+
+  </div>
+
+  <h3>15. Create DataFrame from NumPy Array</h3>
+
+  <pre><code>Data = np.array([[2,2000,3],[4,5000,4],[3,8000,4],[3,11000,5],[1,14000,6]])
+Rows= ['Max', 'Will', 'Jordan', 'Chris', 'Michelle']
+Columns= ['GPA', 'Tuition', 'ClassesEnrolled']
+df_1 = pd.DataFrame(Data,Rows,Columns)
+df_1</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">          GPA  Tuition  ClassesEnrolled
+Max         2     2000                3
+Will        4     5000                4
+Jordan      3     8000                4
+Chris       3    11000                5
+Michelle    1    14000                6</div>
+
+  </div>
+
+  <h3>16. Create DataFrame from Dictionary</h3>
+
+  <pre><code>dictionary_2 = {'Grade':['A','A','B','B','C','C'],
+                'Tuition':[12500,23600,30000,30000,47200,60000],
+                'State':['NY','CA','IL','IL','WI','NV']}
+df_2 = pd.DataFrame(data=dictionary_2)
+df_2</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">  Grade  Tuition State
+0     A    12500    NY
+1     A    23600    CA
+2     B    30000    IL
+3     B    30000    IL
+4     C    47200    WI
+5     C    60000    NV</div>
+
+  </div>
+
+  <h3>17. Inspect DataFrame Information</h3>
+
+  <pre><code>df_2.info()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 6 entries, 0 to 5
+Data columns (total 3 columns):
+ #   Column   Non-Null Count  Dtype 
+---  ------   --------------  ----- 
+ 0   Grade    6 non-null      object
+ 1   Tuition  6 non-null      int64 
+ 2   State    6 non-null      object
+dtypes: int64(1), object(2)
+memory usage: 272.0+ bytes</div>
+
+  </div>
+
+  <p>---</p>
+
+  <hr/>
+
+  <h2 id="notebook-2-loading-data">Notebook 2: Loading Data</h2>
+
+  <p>This notebook explores techniques for generating arrays programmatically, connecting to online web APIs, and loading local flat files.</p>
+
+  <h3>1. Generate Array with Interval Range</h3>
+
+  <pre><code>Array_3 = np.arange(30)
+Array_3</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+       17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])</div>
+
+  </div>
+
+  <h3>2. Slicing with `arange`</h3>
+
+  <pre><code>np.arange(3,7)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([3, 4, 5, 6])</div>
+
+  </div>
+
+  <h3>3. Slicing with `arange` and step</h3>
+
+  <pre><code># np.arange(start, stop, step)
+np.arange(1,10,2)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([1, 3, 5, 7, 9])</div>
+
+  </div>
+
+  <h3>4. Linear Spacing</h3>
+
+  <pre><code># 20 evenly spaced floats between 0 and 5
+np.linspace(0,5,20)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([0.        , 0.26315789, 0.52631579, 0.78947368, 1.05263158,
+       1.31578947, 1.57894737, 1.84210526, 2.10526316, 2.36842105,
+       2.63157895, 2.89473684, 3.15789474, 3.42105263, 3.68421053,
+       3.94736842, 4.21052632, 4.47368421, 4.73684211, 5.        ])</div>
+
+  </div>
+
+  <h3>5. Generate Zero Matrices</h3>
+
+  <pre><code>np.zeros((3, 4))</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([[0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.]])</div>
+
+  </div>
+
+  <h3>6. Random Float Values</h3>
+
+  <pre><code># 10 random float values between 0 and 1
+np.random.rand(10)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([0.10948721, 0.42726152, 0.11934049, 0.3120513 , 0.92493051,
+       0.87818833, 0.6053977 , 0.3952584 , 0.9709223 , 0.92499124])</div>
+
+  </div>
+
+  <h3>7. Random Integer within Range</h3>
+
+  <pre><code>np.random.randint(10,20)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">14</div>
+
+  </div>
+
+  <h3>8. Random Integer Matrix with Specific Shape</h3>
+
+  <pre><code># Random integers between 1 and 99 in a 2x4 matrix
+np.random.randint(1,100,(2,4))</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([[38, 41, 57, 18],
+       [67, 46, 58, 92]])</div>
+
+  </div>
+
+  <h3>9. Seed the Random Number Generator</h3>
+
+  <p>Seeding guarantees that the code produces identical random arrays each run.</p>
+
+  <pre><code>np.random.seed(11)
+np.random.randint(10,21,5)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([19, 10, 11, 17, 11])</div>
+
+  </div>
+
+  <pre><code># Running it a second time without setting seed gives different values
+np.random.randint(10,21,5)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([15, 17, 14, 11, 18])</div>
+
+  </div>
+
+  <pre><code># Resetting the seed returns the exact original values
+np.random.seed(11)
+np.random.randint(10,21,5)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">array([19, 10, 11, 17, 11])</div>
+
+  </div>
+
+  <h3>10. Fetch Live Stocks via Naver DataReader API</h3>
+
+  <pre><code>import pandas_datareader.data as pdr
+
+# '005930' corresponds to Samsung Electronics on KOSPI
+naver_df = pdr.DataReader('005930', 'naver', '2022-01-01', '2022-01-31')
+naver_df.head()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">             Open   High    Low  Close    Volume
+Date                                            
+2022-01-03  79400  79800  78200  78600  13502112
+2022-01-04  78800  79200  78300  78700  12427416
+2022-01-05  78800  79000  76400  77400  25470640
+2022-01-06  76700  77600  76600  76900  12931954
+2022-01-07  78100  78400  77400  78300  15163757</div>
+
+  </div>
+
+  <h3>11. Fetch Live Stock Data via yfinance API</h3>
+
+  <pre><code>import yfinance as yf
+
+stocks_df = yf.download('SPY', start='2022-01-01', end='2022-01-31')
+stocks_df.head()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">                  Open        High         Low       Close   Adj Close    Volume
+Date                                                                            
+2022-01-03  476.299988  477.850006  473.850006  477.709991  466.563354  72668200
+2022-01-04  479.220001  479.980011  475.579987  477.549988  466.407043  71178700
+2022-01-05  477.160004  477.980011  468.279999  468.380005  457.451080 104538900
+2022-01-06  467.890015  470.820007  465.429993  467.940002  457.021271  86858900
+2022-01-07  467.950012  469.200012  464.649994  466.089996  455.214447  85111600</div>
+
+  </div>
+
+  <h3>12. Load Local CSV Data</h3>
+
+  <pre><code>df_3 = pd.read_csv('Data Source.csv')
+df_3.info()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 1887 entries, 0 to 1886
+Data columns (total 8 columns):
+ #   Column      Non-Null Count  Dtype  
+---  ------      --------------  -----  
+ 0   Store       1887 non-null   int64  
+ 1   Date        1887 non-null   object 
+ 2   CategoryID  1887 non-null   int64  
+ 3   ProductID   1887 non-null   object 
+ 4   Q1          1887 non-null   float64
+ 5   Q2          1885 non-null   object 
+ 6   Q3          1886 non-null   float64
+ 7   Q4          1881 non-null   float64
+dtypes: float64(3), int64(2), object(3)
+memory usage: 118.1+ KB</div>
+
+  </div>
+
+  <p>---</p>
+
+  <hr/>
+
+  <h2 id="notebook-3-cleaning-data">Notebook 3: Cleaning Data</h2>
+
+  <p>This notebook covers standard data auditing and cleaning techniques on transaction logs containing missing values, duplicates, wrong data types, and unparsed fields.</p>
+
+  <h3>1. Load data-source.csv</h3>
+
+  <pre><code>import pandas as pd
+import numpy as np
+
+df_3 = pd.read_csv('data-source.csv')
+df_3.head()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">  TransID  Store                Date  CategoryID ProductID        Q1        Q2        Q3  Q4
+0   Txn-1      1   3/10/2019 0:00:00           2  11XXRP-P  24924.50  46039.49  41595.55 NaN
+1   Txn-2      1    6/4/2019 0:00:00           2  12XXRP-Q  50605.27  44682.74  47928.89 NaN
+2   Txn-3      1   1/16/2019 0:00:00           2    13XXRP  13740.12  10887.84  11523.47 NaN
+3   Txn-4      1  10/18/2019 0:00:00           6    14XXRP  39954.04  35351.21  36826.95 NaN
+4   Txn-5      1   4/11/2019 0:00:00           2  15XXRP-A  32229.38  29620.81  26468.27 NaN</div>
+
+  </div>
+
+  <h3>2. Check Column Names and Index</h3>
+
+  <pre><code>print(df_3.columns)
+print(df_3.index)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Index(['TransID', 'Store', 'Date', 'CategoryID', 'ProductID', 'Q1', 'Q2', 'Q3', 'Q4'], dtype='object')
+RangeIndex(start=0, stop=25, step=1)</div>
+
+  </div>
+
+  <h3>3. Auditing Shapes & Data Types</h3>
+
+  <pre><code>print("Shape:", df_3.shape)
+print("
+Data Types:")
+print(df_3.dtypes)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Shape: (25, 9)
+
+Data Types:
+TransID        object
+Store           int64
+Date           object
+CategoryID      int64
+ProductID      object
+Q1            float64
+Q2            float64
+Q3            float64
+Q4            float64
+dtype: object</div>
+
+  </div>
+
+  <h3>4. Audit Missing Values (NaNs)</h3>
+
+  <pre><code>df_3.isna().sum()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">TransID       0
+Store         0
+Date          0
+CategoryID    0
+ProductID     0
+Q1            1
+Q2            2
+Q3            1
+Q4            8
+dtype: int64</div>
+
+  </div>
+
+  <h3>5. Summary Statistics Profiling</h3>
+
+  <pre><code>df_3.describe(include='all')</code></pre>
+
+  <h3>6. Rename Columns</h3>
+
+  <pre><code>df_3 = df_3.rename(columns={'Store': 'StoreID'})</code></pre>
+
+  <h3>7. Convert ID Columns to Objects (Categorical)</h3>
+
+  <p>Columns containing IDs should not be treated as numbers.</p>
+
+  <pre><code>df_3 = df_3.astype({
+    'CategoryID': 'object',
+    'StoreID': 'object'
+})</code></pre>
+
+  <h3>8. Convert Date Column to Datetime</h3>
+
+  <pre><code>df_3['Date'] = pd.to_datetime(df_3['Date'])</code></pre>
+
+  <h3>9. Set Row Index to TransID</h3>
+
+  <pre><code>df_3 = df_3.set_index('TransID')</code></pre>
+
+  <h3>10. Drop Rows containing any NaNs</h3>
+
+  <pre><code>df_3.dropna()</code></pre>
+
+  <h3>11. Drop Columns containing any NaNs</h3>
+
+  <pre><code>df_3.dropna(axis=1)</code></pre>
+
+  <h3>12. Fill NaNs with 0</h3>
+
+  <pre><code>pd.set_option('future.no_silent_downcasting', True)
+df_3.fillna(0).head(6)</code></pre>
+
+  <h3>13. Forward Fill Missing Values</h3>
+
+  <p>Replaces NaNs with the previous non-NaN row values.</p>
+
+  <pre><code>df_3.ffill().head(6)</code></pre>
+
+  <h3>14. Backward Fill Missing Values</h3>
+
+  <p>Replaces NaNs with the next non-NaN row values.</p>
+
+  <pre><code>df_3.bfill().head(6)</code></pre>
+
+  <h3>15. Audit Duplicates</h3>
+
+  <pre><code>print("Full Row Duplicates:", df_3.duplicated().sum())
+print("Product Code Duplicates:", df_3['ProductID'].duplicated().sum())</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Full Row Duplicates: 4
+Product Code Duplicates: 5</div>
+
+  </div>
+
+  <h3>16. Remove Duplicates</h3>
+
+  <pre><code># Keep only unique rows
+df_cleaned = df_3.drop_duplicates()
+print("Cleaned Shape:", df_cleaned.shape)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">Cleaned Shape: (21, 8)</div>
+
+  </div>
+
+  <pre><code># Remove duplicates based on a subset (e.g. keeping only the first occurrence of each StoreID)
+df_3.drop_duplicates(subset=['StoreID'])</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">        StoreID       Date CategoryID  ProductID        Q1        Q2        Q3        Q4
+TransID                                                                                 
+Txn-1         1 2019-03-10          2   11XXRP-P  24924.50  46039.49  41595.55       NaN
+Txn-10        2 2019-03-10          3    110XXRP -30721.50 -31494.77  29634.13  27921.96
+Txn-21        3 2019-03-10          3    116XXRP  10217.55  11873.89  13855.54  12881.02</div>
+
+  </div>
+
+  <h3>17. String Splitting Product Codes</h3>
+
+  <p>Split product code suffixes into a separate column.</p>
+
+  <pre><code># Check split output
+df_3['ProductID'].str.split('-', expand=True).head(5)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">              0     1
+TransID              
+Txn-1    11XXRP     P
+Txn-2    12XXRP     Q
+Txn-3    13XXRP  None
+Txn-4    14XXRP  None
+Txn-5    15XXRP     A</div>
+
+  </div>
+
+  <pre><code># Apply split to columns
+df_3[['ProductID','SpecialID']] = df_3['ProductID'].str.split('-', expand=True)
+df_3.head(5)</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">        StoreID       Date CategoryID ProductID        Q1        Q2        Q3  Q4 SpecialID
+TransID                                                                                    
+Txn-1         1 2019-03-10          2    11XXRP  24924.50  46039.49  41595.55 NaN         P
+Txn-2         1 2019-06-04          2    12XXRP  50605.27  44682.74  47928.89 NaN         Q</div>
+
+  </div>
+
+  <h3>18. Export Clean Dataset</h3>
+
+  <pre><code>df_3.to_csv('export.csv')</code></pre>
+
+  <hr/>
+
+  <h2 id="chapter-1-exercise-loading-and-cleaning-at-scale-1000-rows">Chapter 1 Exercise: Loading & Cleaning at Scale (1,000 Rows)</h2>
+
+  <p>This notebook applies the loaded dataset tools and cleaning functions onto a larger 1,000-row order database containing order prices, quantities, and shipping details.</p>
+
+  <h3>1. Load Chapter Exercise Data</h3>
+
+  <pre><code>df = pd.read_csv('Chapter Exercise Data.csv')
+df</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">     OrderID  PricePerItem  Quantity  ShippingDistance  CustomerID
+0          1            10         5               3.0        6671
+1          2            10        10              84.0        8647
+2          3            10         1               NaN        4075
+3          4            10        10              92.0        8452
+4          5            10         3               2.0        2621
+..       ...           ...       ...               ...         ...
+995      996            10         8               2.0        6691
+996      997            10         9              43.0        9782
+997      998            10         2              10.0        1096
+998      999            10         9              49.0        5319
+999     1000            10         4              46.0        8187
+
+[1000 rows x 5 columns]</div>
+
+  </div>
+
+  <h3>2. Calculate Order Values (Quantity * Price)</h3>
+
+  <pre><code>df['PricePerItem']*df['Quantity']</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">0       50
+1      100
+2       10
+3      100
+4       30
+      ... 
+995     80
+996     90
+997     20
+998     90
+999     40
+Length: 1000, dtype: int64</div>
+
+  </div>
+
+  <h3>3. Inspect Dataframe Info</h3>
+
+  <pre><code>df.info()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 5 columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ 0   OrderID           1000 non-null   int64  
+ 1   PricePerItem      1000 non-null   int64  
+ 2   Quantity          1000 non-null   int64  
+ 3   ShippingDistance  994 non-null    float64
+ 4   CustomerID        1000 non-null   int64  
+dtypes: float64(1), int64(4)
+memory usage: 39.2 KB</div>
+
+  </div>
+
+  <h3>4. Drop Rows with Missing Values (Checking Result)</h3>
+
+  <pre><code>df2 = df.dropna()
+df2.info()</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">     OrderID  PricePerItem  Quantity  ShippingDistance  CustomerID
+0          1            10         5               3.0        6671
+1          2            10        10              84.0        8647
+3          4            10        10              92.0        8452
+4          5            10         3               2.0        2621
+6          7            10         2              63.0        3799
+..       ...           ...       ...               ...         ...
+995      996            10         8               2.0        6691
+996      997            10         9              43.0        9782
+997      998            10         2              10.0        1096
+998      999            10         9              49.0        5319
+999     1000            10         4              46.0        8187
+
+[994 rows x 5 columns]</div>
+
+  </div>
+
+  <h3>5. Fill Missing Values with Zero</h3>
+
+  <pre><code>df = df.fillna(0)
+df</code></pre>
+
+  <div class="jup-out">
+
+    <div class="jup-out-label">Output</div>
+
+    <div class="jup-text">     OrderID  PricePerItem  Quantity  ShippingDistance  CustomerID
+0          1            10         5               3.0        6671
+1          2            10        10              84.0        8647
+2          3            10         1               0.0        4075
+3          4            10        10              92.0        8452
+4          5            10         3               2.0        2621
+..       ...           ...       ...               ...         ...
+995      996            10         8               2.0        6691
+996      997            10         9              43.0        9782
+997      998            10         2              10.0        1096
+998      999            10         9              49.0        5319
+999     1000            10         4              46.0        8187
+
+[1000 rows x 5 columns]</div>
+
+  </div>
+
+  <p>---</p>
+
+  <div class="about-box" style="margin-top:2.5rem; margin-bottom:2.5rem; max-width: 100%;">
+    <p><strong>Part 2 Takeaway:</strong> Messy data is the norm. I learned that you cannot just load a dataset and immediately start plotting it. You have to spend a significant amount of time checking for null values, fixing formatting, and making logical decisions on how to fill missing entries without biasing the dataset.</p>
+  </div>
+
+  <div class="flowchart">
+    <div class="flowchart-title">Part 2 - Loading &amp; Cleaning Pipeline</div>
+    <div class="fc-flow">
+      <div class="fc-box fc-start">Represent Data<span class="fc-sub">NumPy arrays, Pandas Series/DataFrames</span></div>
+      <div class="fc-arrow"></div>
+      <div class="fc-box">Load Source<span class="fc-sub">APIs (yfinance, naver), local CSV files</span></div>
+      <div class="fc-arrow"></div>
+      <div class="fc-box">Profile &amp; Format<span class="fc-sub">Check shapes, rename columns, parse datetimes</span></div>
+      <div class="fc-arrow"></div>
+      <div class="fc-box fc-end">Clean Anomalies<span class="fc-sub">ffill/bfill NaNs, drop duplicates, string split</span></div>
+    </div>
+  </div>
+
+  <div class="part-nav-footer">
+    <a href="../python-part1/">&larr; Part 1 - Intro Python</a>
+    <a href="../python-part3/">Part 3 - Data Analysis &rarr;</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="f-name">Jevan Hava Maula Ihsan</div>
+  <div class="f-copy">2026 · Toronto, Canada</div>
+</footer>
+
+<script>
+  const navEl=document.getElementById('nav'),prog=document.getElementById('prog');
+  window.addEventListener('scroll',()=>{prog.style.width=(window.scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';navEl.classList.toggle('scrolled',window.scrollY>50);});
+  const ham=document.getElementById('nav-hamburger'),nl=document.getElementById('nav-links');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open');});
+  nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open');}));
+  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='projects.html')a.classList.add('active');});
+</script>
+</body>
+</html>

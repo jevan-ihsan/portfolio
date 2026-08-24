@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Projects - Jevan Hava Maula Ihsan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles.css"/>
+</head>
+<body>
+<div id="prog"></div>
+<nav id="nav">
+  <a class="nav-name" href="../">Jevan Hava Maula Ihsan</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="../about/">About</a></li>
+    <li><a href="../work/">Work</a></li>
+    <li><a href="../leadership/">Leadership</a></li>
+    <li><a href="../projects/">Projects</a></li>
+    <li><a href="../social-projects/">Social Projects</a></li>
+    <li><a href="../awards/">Awards</a></li>
+    <li><a href="../skills/">Skills</a></li>
+    <li><a href="../#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner"><a class="page-breadcrumb" href="../">Home</a>
+    <div class="page-eyebrow">Initiatives</div>
+    <h1 class="page-title">Social Projects</h1>
+    <p class="page-subtitle">Community-driven work focused on dementia awareness and elderly care in Indonesia.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="projects-grid">
+    <div class="proj-card rv rv1">
+      <div class="proj-img">
+        <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=700&q=80&auto=format&fit=crop" alt="Elderly care"/>
+      </div>
+      <div class="proj-body">
+        <div class="proj-name">NeuroLima</div>
+        <div class="proj-role">Project Leader · 2025</div>
+        <p class="proj-desc">NeuroLima addresses something most people in Indonesia do not talk about: dementia. I initiated it to connect awareness work with real care home support. Managed stakeholder coordination, non-profit budgeting, and corporate outreach.</p>
+        <div class="proj-highlight">Raised $500 from corporate sponsors and put it all back into the homes.</div>
+        <a class="gallery-link" href="../gallery-neurolima/">Gallery &rarr;</a>
+      </div>
+    </div>
+    <div class="proj-card rv rv2">
+      <div class="proj-img">
+        <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=700&q=80&auto=format&fit=crop" alt="Community care"/>
+      </div>
+      <div class="proj-body">
+        <div class="proj-name">Alzheimer Indonesia</div>
+        <div class="proj-role">Volunteer · 2025</div>
+        <p class="proj-desc">Volunteered with Alzheimer Indonesia running psychological support sessions for elderly residents and organizing community events. The stigma around dementia in Indonesia is real - most of the work was making people comfortable enough to talk about it.</p>
+        <div class="proj-highlight">Three awareness events in one month, building a broad community network.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="f-name">Jevan Hava Maula Ihsan</div>
+  <div class="f-copy">2026 · Toronto, Canada</div>
+</footer>
+
+<script>
+  const navEl=document.getElementById('nav'),prog=document.getElementById('prog');
+  window.addEventListener('scroll',()=>{prog.style.width=(window.scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';navEl.classList.toggle('scrolled',window.scrollY>50);});
+  const ham=document.getElementById('nav-hamburger'),nl=document.getElementById('nav-links');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open');});
+  nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open');}));
+  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='social-projects.html')a.classList.add('active');});
+  const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}});},{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>

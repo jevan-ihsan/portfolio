@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Part 4 - Visualization · Jevan Hava Maula Ihsan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <style>
+    .chart-block { margin:1.8rem 0 2.5rem; }
+    .chart-output { border-radius:var(--r); overflow:hidden; border:1px solid var(--border); background:#f8f8f6; margin:.6rem 0 .5rem; }
+    .chart-output img { width:100%; display:block; max-height:420px; object-fit:contain; padding:.5rem; background:#f8f8f6; }
+    .chart-label { font-size:.68rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-top:.4rem; line-height:1.6; }
+    .chart-label strong { color:var(--navy); }
+    .chart-two-col { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    @media(max-width:640px){ .chart-two-col { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div id="prog"></div>
+<nav id="nav">
+  <a class="nav-name" href="../">Jevan Hava Maula Ihsan</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="../about/">About</a></li>
+    <li><a href="../work/">Work</a></li>
+    <li><a href="../leadership/">Leadership</a></li>
+    <li><a href="../projects/">Projects</a></li>
+    <li><a href="../social-projects/">Social Projects</a></li>
+    <li><a href="../awards/">Awards</a></li>
+    <li><a href="../skills/">Skills</a></li>
+    <li><a href="../#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <a class="page-breadcrumb" href="../project-python/">Python Project</a>
+    <div class="page-eyebrow">Part 04 of 04</div>
+    <h1 class="page-title">Data Visualization</h1>
+    <p class="page-subtitle">Exploratory plots and communicative charts built with Matplotlib and Seaborn.</p>
+  </div>
+</div>
+
+<div class="part-tabs">
+  <a href="../python-part1/">01 · Intro Python</a>
+  <a href="../python-part2/">02 · Loading & Cleaning</a>
+  <a href="../python-part3/">03 · Data Analysis</a>
+  <a href="../python-part4/" class="active">04 · Visualization</a>
+</div>
+
+<div class="part-page">
+
+  <p>This is where I turned raw numbers into visual charts. I split my plotting practice into two main categories:</p>
+  <ul>
+    <li><strong>Exploratory plots:</strong> Quick Seaborn charts (like histograms and heatmaps) to spot patterns and inspect distributions myself.</li>
+    <li><strong>Presentation charts:</strong> Clean, styled plots with custom titles, adjusted limits, and text annotations to make the main takeaway clear to a viewer.</li>
+  </ul>
+
+  <div class="sidebar-toc" id="sidebar-toc">
+    <div class="toc-header">
+      <span class="toc-title">Table of Contents</span>
+      <button class="toc-toggle" id="toc-toggle-btn" aria-label="Toggle TOC">
+        <span class="toc-toggle-icon">&minus;</span>
+      </button>
+    </div>
+    <div class="toc-body">
+      <ul class="toc-list">
+        <li><a href="#notebook-1-visualizing-data-for-exploratory-analysis">Notebook 1: Visualizing Data for Exploratory Analysis</a></li>
+        <li><a href="#notebook-2-visualizing-data-for-sharing-insights">Notebook 2: Visualizing Data for Sharing Insights</a></li>
+        <li><a href="#chapter-3-exercise-visualizing-data-at-scale-1000-rows">Chapter 3 Exercise: Visualizing Data at Scale (1,000 Rows)</a></li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    document.getElementById('toc-toggle-btn').addEventListener('click', () => {
+      const toc = document.getElementById('sidebar-toc');
+      const icon = document.querySelector('.toc-toggle-icon');
+      toc.classList.toggle('collapsed');
+      if (toc.classList.contains('collapsed')) {
+        icon.innerHTML = '&#43;';
+      } else {
+        icon.innerHTML = '&minus;';
+      }
+    });
+  </script>
+
+  <hr/>
+
+  <h2 id="notebook-1-visualizing-data-for-exploratory-analysis">Notebook 1: Visualizing Data for Exploratory Analysis</h2>
+
+  <p>This notebook focuses on using distribution shapes, variance box ranges, and diagnostics scatter grids to inspect raw datasets before running statistical models.</p>
+
+  <h3>1. Setup Returns Dataset</h3>
+
+  <pre><code>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+# Load Closing Prices
+stocks = pd.read_csv('stocks.csv', parse_dates=True, index_col = 'Date')[['Adj Close']]
+bonds = pd.read_csv('bonds.csv', parse_dates=True, index_col = 'Date')[['Adj Close']]
+oil = pd.read_csv('oil.csv', parse_dates=True, index_col = 'Date')[['Adj Close']]
+
+# Convert to Daily Returns
+stocks = stocks.pct_change()
+bonds = bonds.pct_change()
+oil = oil.pct_change()
+
+# Combine DataFrames
+stocksAndBonds = pd.concat([stocks, bonds, oil], axis=1, join='inner')
+stocksAndBonds.columns = ['SPY','TLT','USO']
+stocksAndBonds.head(3)</code></pre>
+
+  <div class="chart-block">
+
+    <h3>2. Plot Single Variable Histogram</h3>
+
+    <p>Shows the distribution of SPY daily returns.</p>
+
+    <pre><code>sns.histplot(stocksAndBonds['SPY'])</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_histogram.png" alt="2. Plot Single Variable Histogram"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A histogram shows how often values fall into different ranges. Here, SPY returns form a tall, narrow peak centered around 0, showing that most daily changes are very small, with a few extreme return days on the outer edges.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>3. Adjusting Bin Count</h3>
+
+    <pre><code># Increase granularity with 50 bins
+sns.histplot(stocksAndBonds['SPY'], bins=50)</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_histogram.png" alt="3. Adjusting Bin Count"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Increasing the bin count to 50 breaks returns into narrower intervals. This gives a higher resolution view of the distribution, confirming that daily returns are highly symmetric and concentrated around zero.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>4. Dodge Comparison Plot</h3>
+
+    <p>Plots multiple column distributions side-by-side.</p>
+
+    <pre><code>sns.histplot(stocksAndBonds, bins=25, multiple="dodge")</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_histogram.png" alt="4. Dodge Comparison Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> This side-by-side bar comparison shows that USO (Oil) returns have a much wider and flatter distribution compared to SPY and TLT, meaning oil daily returns are significantly more volatile.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>5. Layer Comparison Plot</h3>
+
+    <p>Overlays histograms with transparency.</p>
+
+    <pre><code>sns.histplot(stocksAndBonds[['SPY','TLT']], bins=25, multiple="layer")</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_histogram.png" alt="5. Layer Comparison Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Overlays the return distributions of SPY and TLT. This shows that the spread of SPY is slightly wider than TLT, meaning the S&P 500 experienced higher daily variance compared to US Treasury bonds during this period.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>6. Box Plot Comparison</h3>
+
+    <p>Compares central values and outlier presence across assets.</p>
+
+    <pre><code>sns.boxplot(data = stocksAndBonds)</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_boxplot.png" alt="6. Box Plot Comparison"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A box plot shows the median (line inside the box), the interquartile range (the box itself), and outliers (points beyond the whiskers). Here, the large spread of dots for USO confirms it has the highest volatility and the most extreme outlier returns, while TLT has the tightest range.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>7. Sliced Box Plot Comparison</h3>
+
+    <pre><code>sns.boxplot(data = stocksAndBonds[['SPY','TLT']])</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_boxplot.png" alt="7. Sliced Box Plot Comparison"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Comparing only SPY and TLT shows that while their medians are close to zero, the S&P 500 (SPY) has a slightly taller box (higher volatility) and more frequent extreme positive and negative outlier return days.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>8. Pairplot Grid</h3>
+
+    <p>Generates a matrix of bivariate scatter plots alongside univariate distribution histograms on the diagonal.</p>
+
+    <pre><code>sns.pairplot(stocksAndBonds)</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_pairplot.png" alt="8. Pairplot Grid"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A pairplot shows pairwise relationships across the entire dataset. The diagonal histograms show each asset's return spread, while the scatter plots show how assets move relative to each other. For example, the scatter plot of SPY vs TLT shows a round cloud, indicating very low correlation.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>9. Heatmap Visualizations</h3>
+
+    <pre><code># Standard Heatmap
+sns.heatmap(stocksAndBonds.corr())</code></pre>
+
+    <pre><code># Styled Heatmap with annotations and custom limits
+sns.heatmap(stocksAndBonds.corr(), vmin=-1, annot=True, cmap='coolwarm')</code></pre>
+
+    <p>---</p>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_heatmap.png" alt="9. Heatmap Visualizations"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A heatmap colors correlation coefficients to highlight relationships. The values close to 1 on the diagonal show each asset against itself. The correlation of -0.01 between SPY and TLT confirms US stocks and treasury bonds were uncorrelated during this period, while SPY and USO have a moderate positive correlation (0.45).</div>
+
+  </div>
+
+  <hr/>
+
+  <h2 id="notebook-2-visualizing-data-for-sharing-insights">Notebook 2: Visualizing Data for Sharing Insights</h2>
+
+  <p>This notebook covers standard adjustments for styling line grids, mapping palettes to bar charts, adding textual labels, and building multi-dimensional bubble charts.</p>
+
+  <div class="chart-block">
+
+    <h3>1. Baseline Line Plot</h3>
+
+    <pre><code>years = stocksAndBonds.index
+stock_value = stocksAndBonds['SPY']
+
+# Semicolon hides Matplotlib's print text output
+plt.plot(years, stock_value);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_linechart.png" alt="1. Baseline Line Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A line chart tracks continuous trends over time. This basic plot tracks the daily adjusted closing price of SPY, showing a general upward trend from around $360 to over $460, despite short-term dips.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>2. Styled Line Chart with Labels</h3>
+
+    <pre><code>plt.plot(years, stock_value)
+plt.title('Trend in \'SPY\'')
+plt.xlabel('Years')
+plt.ylabel('Adj Close')
+plt.xticks(rotation=45);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_linechart.png" alt="2. Styled Line Chart with Labels"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Adding a title and axis labels makes the chart self-contained. The x-axis dates are rotated 45 degrees so they are readable without overlapping.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>3. Adjusting Plot Sizing & Line Color</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+plt.plot(years, stock_value, color='green')
+plt.title('Trend in \'SPY\'')
+plt.xlabel('Years')
+plt.ylabel('Adj Close')
+plt.xticks(rotation=45);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_linechart.png" alt="3. Adjusting Plot Sizing & Line Color"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Setting the figure size to 14x5 stretches the timeline for easier scanning, and changing the line color to a custom shade makes the visual look clean and professional.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>4. Custom Dotted Red Line Chart</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+# Dotted line styling (--), circular markers (o), marker size 3
+plt.plot(years, stock_value, color = 'red', marker = 'o', markersize = 3, linestyle = '--')
+plt.title('Trend in \'SPY\'')
+plt.xlabel('Years')
+plt.ylabel('Adj Close')
+plt.xticks(rotation=45);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_linechart.png" alt="4. Custom Dotted Red Line Chart"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Using circular markers and a red dotted line style is useful when you want to highlight discrete data points along the continuous timeline.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>5. Adjusting Axis Slicing (Limits)</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+plt.plot(years, stock_value)
+plt.title('Trend in \'SPY\'')
+plt.xlabel('Years')
+plt.ylabel('Adj Close')
+plt.xticks(rotation=45)
+# Zoom in on the y-axis
+plt.ylim(340, 500);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_linechart.png" alt="5. Adjusting Axis Slicing (Limits)"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Setting the y-axis limits to zoom in between $340 and $500 removes empty vertical space, making it much easier to inspect the price fluctuations.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>6. Convert Mean Values for Bar Plot</h3>
+
+    <pre><code>stock_mean = stocksAndBonds.mean()
+bar_plot = pd.DataFrame(data = stock_mean, columns = ['mean_value'])
+bar_plot</code></pre>
+
+    <pre><code>     mean_value
+SPY  369.324838
+TLT  134.502578
+USO   35.617305</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_barplot.png" alt="6. Convert Mean Values for Bar Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Before plotting, we compile the average price of each asset into a summary DataFrame. This step calculates that SPY has the highest average price, followed by TLT, and USO has the lowest.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>7. Basic Vertical Bar Plot</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.barplot(x=bar_plot.index, y='mean_value', data=bar_plot);</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_barplot.png" alt="7. Basic Vertical Bar Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A vertical bar plot is best for comparing absolute values of different categories. Here, we compare the mean prices of SPY, TLT, and USO side-by-side.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>8. Styled Bar Charts (Palettes)</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.barplot(x = bar_plot.index, y = 'mean_value', data=bar_plot, palette = 'coolwarm')
+plt.title('Mean Adj Close for stocks')
+plt.ylabel('Mean Adj Close')
+...</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_barplot.png" alt="8. Styled Bar Charts (Palettes)"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Applying the 'coolwarm' palette styles the bars with a color gradient, making the differences between categories more visually distinct.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>9. Horizontal Bar Plot</h3>
+
+    <p>Swap x and y variables to generate a horizontal chart.</p>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.barplot(y = bar_plot.index, x = 'mean_value', data=bar_plot, palette = 'colorblind')
+plt.title('Mean Adj Close for stocks')
+plt.ylabel('Stocks')
+plt.xlabel('Mean Adj Close');</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_barplot.png" alt="9. Horizontal Bar Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Horizontal bars are ideal when you have long category labels. It displays the same mean price comparisons rotated 90 degrees.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>10. Horizontal Bar Plot with Annotation Text</h3>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.barplot(y = bar_plot.index, x = 'mean_value', data=bar_plot, palette = 'colorblind')
+plt.title('Mean Adj Close for stocks')
+plt.ylabel('Stocks')
+plt.xlabel('Mean Adj Close')
+
+# Add comment text at (x=300, y=0.5)
+plt.annotate('SPY has the highest mean value', xy=(300, 0.5));</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_barplot.png" alt="10. Horizontal Bar Plot with Annotation Text"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Adding an annotation text callout directly on the chart immediately highlights the key takeaway: SPY's mean price is significantly higher ($409) than TLT's and USO's.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>11. Basic Scatter Plot</h3>
+
+    <pre><code>stocks_pct = stocks.pct_change()
+bonds_pct =  bonds.pct_change()
+oil_pct =  oil.pct_change()
+stocksAndBonds_pct = pd.concat([stocks_pct, bonds_pct, oil_pct], axis=1, join='inner')
+stocksAndBonds_pct.columns = ['SPY','TLT','USO']
+
+plt.figure(figsize=(12, 8))
+sns.scatterplot(x = stocksAndBonds_pct['SPY'], y = stocksAndBonds_pct['TLT'])</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="11. Basic Scatter Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> A scatter plot plots two continuous variables against each other to look for relationships. The circular cloud of points for SPY vs TLT returns confirms their near-zero correlation.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>12. Add Year Dimension Column</h3>
+
+    <pre><code>stocksAndBonds_pct['Year'] = stocksAndBonds_pct.index.year</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="12. Add Year Dimension Column"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> To analyze how relationships change over time, we add a 'Year' column to the dataset to use as a categorical styling variable.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>13. Scatter Plot with Style Categorical Coding</h3>
+
+    <p>Uses different marker shapes (e.g. circles, squares) for each year.</p>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.scatterplot(x = 'SPY', y = 'TLT', data = stocksAndBonds_pct, style = 'Year')
+plt.title('Percent Change in Stocks vs Bonds');</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="13. Scatter Plot with Style Categorical Coding"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Using different marker shapes (circles, squares, triangles) for each year helps distinguish the time periods, though it can look cluttered with many points.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>14. Scatter Plot with Hue Color Coding</h3>
+
+    <p>Uses different colors to represent each year.</p>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.scatterplot(x = stocksAndBonds_pct['SPY'], y = stocksAndBonds_pct['TLT'], data = stocksAndBonds_pct, hue = 'Year')
+plt.title('Percent Change in Stocks vs Bonds');</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="14. Scatter Plot with Hue Color Coding"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Coloring the points by year is a much cleaner way to see if returns clustered differently in certain years. The overlapping colors show the general relationship remained stable across years.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>15. Scatter Plot with Size Bubble Coding</h3>
+
+    <p>Varies the size of each dot to represent the year.</p>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.scatterplot(x = stocksAndBonds_pct['SPY'], y = stocksAndBonds_pct['TLT'], data = stocksAndBonds_pct, size = 'Year')
+plt.title('Percent Change in Stocks vs Bonds');</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="15. Scatter Plot with Size Bubble Coding"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> Sizing the points by year creates a bubble chart. Here, the larger bubbles represent more recent years, though this is usually better suited for continuous variables like trading volume.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>16. Multi-Dimensional Scatter Plot</h3>
+
+    <p>Encodes four dimensions on a single chart:</p>
+
+    <p>* <strong>X-axis</strong>: SPY return</p>
+
+    <p>* <strong>Y-axis</strong>: TLT return</p>
+
+    <p>* <strong>Style shape</strong>: Year</p>
+
+    <p>* <strong>Color Hue & Bubble Size</strong>: USO return magnitude</p>
+
+    <pre><code>plt.figure(figsize=(12, 8))
+sns.scatterplot(x = 'SPY', y = 'TLT', data = stocksAndBonds_pct,
+                style = 'Year', hue = 'USO', size = 'USO')
+plt.title('Percent Change in Stocks vs Bonds');</code></pre>
+
+    <p>---</p>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_scatter.png" alt="16. Multi-Dimensional Scatter Plot"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> This scatter plot visualizes four variables at once: x/y coordinate for SPY vs TLT returns, color hue for the year, and bubble size for USO (Oil) returns. It shows that large daily swings in oil prices (larger bubbles) occur randomly across all years and return ranges.</div>
+
+  </div>
+
+  <hr/>
+
+  <h2 id="chapter-3-exercise-visualizing-data-at-scale-1000-rows">Chapter 3 Exercise: Visualizing Data at Scale (1,000 Rows)</h2>
+
+  <p>This notebook generates diagnostic plots to visualize discrete frequency patterns, counts of categories, and spending coordinate clusters inside the 1,000-row cleaned orders database.</p>
+
+  <div class="chart-block">
+
+    <h3>1. Discrete Frequency Histogram of Order Quantities</h3>
+
+    <pre><code>sns.histplot(df['Quantity'])</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_ex_histogram.png" alt="1. Discrete Frequency Histogram of Order Quantities"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> This histogram tracks customer order quantities from our transaction log. The peak at 1 and 2 shows that the vast majority of orders are small-quantity purchases, which drops off sharply for larger order counts.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>2. Grouped Order Counts per Customer</h3>
+
+    <pre><code># Count number of OrderID for each CustomerID
+cust_orders = pd.DataFrame(df.groupby('CustomerID')['OrderID'].count())
+
+# Count number of Customers for each Order Quantity
+orders_by_customers = pd.DataFrame(cust_orders.groupby('OrderID')['OrderID'].count())
+
+# Create bar plot
+sns.barplot(x=orders_by_customers.index, y='OrderID', data=orders_by_customers)
+plt.xlabel('Num of Orders')
+plt.ylabel('Num of Customers')</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_ex_barplot.png" alt="2. Grouped Order Counts per Customer"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> This bar chart groups our customer base by their total order frequency. It reveals that most customers only placed a single order, highlighting a key business opportunity to improve repeat customer retention.</div>
+
+  </div>
+
+  <div class="chart-block">
+
+    <h3>3. Bivariate Scatter Plot: Quantity vs. Amount</h3>
+
+    <pre><code>sns.scatterplot(x='Quantity', y='Amount', data=df)</code></pre>
+
+    <div class="chart-output">
+
+      <img src="../assets/charts/chart_ex_scatterplot.png" alt="3. Bivariate Scatter Plot: Quantity vs. Amount"/>
+
+    </div>
+
+    <div class="chart-label"><strong>Interpretation:</strong> This scatter plot compares order quantity against the total transaction amount. The distinct horizontal bands show price tiers, confirming that total spending scales linearly with quantity but is bounded by standard product pricing.</div>
+
+  </div>
+
+  <div class="about-box" style="margin-top:2.5rem; margin-bottom:2.5rem; max-width: 100%;">
+    <p><strong>Part 4 Takeaway:</strong> There is a big difference between a quick chart you use to check your own work and a styled chart you show to a client. Customizing labels, adjusting axes, and adding text annotations ensure that the main business insight is immediately clear without needing a separate explanation.</p>
+  </div>
+
+  <div class="flowchart">
+    <div class="flowchart-title">Part 4 - Chart Type Reference</div>
+    <div class="fc-cols">
+      <div>
+        <div class="fc-col-label">Exploratory Plots</div>
+        <div class="fc-col-flow">
+          <div class="fc-box fc-start">Histograms<span class="fc-sub">Dodge / Layer return patterns</span></div>
+          <div class="fc-arrow"></div>
+          <div class="fc-box">Box Plots<span class="fc-sub">Diagnose medians and volatility outliers</span></div>
+          <div class="fc-arrow"></div>
+          <div class="fc-box">Pairplots<span class="fc-sub">Generate full correlation scatters</span></div>
+          <div class="fc-arrow"></div>
+          <div class="fc-box fc-end">Heatmaps<span class="fc-sub">Annotate coefficients with cmap</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="fc-col-label">Communicative Plots</div>
+        <div class="fc-col-flow">
+          <div class="fc-box fc-start">Line Charts<span class="fc-sub">Style custom limits, color, marker</span></div>
+          <div class="fc-arrow"></div>
+          <div class="fc-box">Bar Charts<span class="fc-sub">Draw horizontal bars &amp; annotations</span></div>
+          <div class="fc-arrow"></div>
+          <div class="fc-box fc-end">Scatter Plots<span class="fc-sub">Encode style, hue, and size dimensions</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="part-nav-footer">
+    <a href="../python-part3/">&larr; Part 3 - Data Analysis</a>
+    <a href="../project-python/">Back to Overview &rarr;</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="f-name">Jevan Hava Maula Ihsan</div>
+  <div class="f-copy">2026 · Toronto, Canada</div>
+</footer>
+
+<script>
+  const navEl=document.getElementById('nav'),prog=document.getElementById('prog');
+  window.addEventListener('scroll',()=>{prog.style.width=(window.scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';navEl.classList.toggle('scrolled',window.scrollY>50);});
+  const ham=document.getElementById('nav-hamburger'),nl=document.getElementById('nav-links');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open');});
+  nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open');}));
+  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='projects.html')a.classList.add('active');});
+</script>
+</body>
+</html>
