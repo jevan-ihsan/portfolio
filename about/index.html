@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div class="section">
+<div class="section about-section">
   <div class="about-grid">
     <div class="rv rv1">
       <div class="about-photo">
@@ -55,10 +55,22 @@
       <p>And for sidequesting, I’m still completely new in this area and actively exploring options, including swimming, running, and weightlifting. My ultimate bucket list is to explore the world while doing memorable sidequests essential for my mental health and brain development. For example, I wanted to try and learn skydiving, bungee jumping, snowboarding, open-water swimming, and more. Wish me the best of luck so that I can accomplish my bucket list and have the best story I can tell to people!</p>
       <p>Though my life journey is incomplete and many steps to go, I always carry my values I believe. Thoughtful collaboration, critical thinking, empathy, and accountability are the keys for this world to keep rotating. Therefore, I’m always open to new learning opportunities, challenges, and interesting conversations. Click contact to connect:)</p>
       <div class="about-stats">
-        <div><div class="stat-num" data-target="7">0</div><div class="stat-lbl">Roles &amp; Positions</div></div>
+        <div><div class="stat-num" data-target="8">0</div><div class="stat-lbl">Roles &amp; Positions</div></div>
         <div><div class="stat-num" data-target="6">0</div><div class="stat-lbl">Awards &amp; Medals</div></div>
         <div><div class="stat-num" data-target="200" data-suf="+">0</div><div class="stat-lbl">Students impacted</div></div>
       </div>
+    </div>
+  </div>
+
+  <div class="about-gallery rv rv3">
+    <h2 class="sec-title">Gallery</h2>
+    <div class="about-gallery-grid">
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
+      <div class="about-gallery-item"><span>Photo coming soon</span></div>
     </div>
   </div>
 </div>
@@ -75,7 +87,7 @@
   const ham = document.getElementById('nav-hamburger'), nl = document.getElementById('nav-links');
   ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open');});
   nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open');}));
-  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='about.html')a.classList.add('active');});
+  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='../about/')a.classList.add('active');});
   const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}});},{threshold:.1});
   document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
   function animNum(el){const t=parseFloat(el.dataset.target),dec=parseInt(el.dataset.dec||0),suf=el.dataset.suf||'';const dur=1700,s=performance.now();(function step(now){const p=Math.min((now-s)/dur,1),e=p<.5?2*p*p:-1+(4-2*p)*p;el.textContent=dec?(e*t).toFixed(dec)+suf:Math.floor(e*t)+suf;if(p<1)requestAnimationFrame(step);})(s);}

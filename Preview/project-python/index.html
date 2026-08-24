@@ -223,7 +223,7 @@
   const ham=document.getElementById('nav-hamburger'),nl=document.getElementById('nav-links');
   ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open');});
   nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open');}));
-  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='projects.html')a.classList.add('active');});
+  document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')==='../projects/')a.classList.add('active');});
   const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}});},{threshold:.1});
   document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
 </script>
