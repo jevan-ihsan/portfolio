@@ -25,9 +25,179 @@
     .project-entry-tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1rem; }
     .project-entry-tag { padding:.2rem .6rem; background:rgba(15,45,82,.06); border-radius:100px; font-size:.68rem; color:var(--navy); font-weight:500; }
     .project-entry-link { font-size:.78rem; color:var(--gold); font-weight:600; letter-spacing:.04em; }
+
+    /* Section subheaders */
+    .subsec-header { margin-bottom:1.8rem; }
+    .subsec-header + .project-list { margin-bottom:4rem; }
+    .subsec-eyebrow { font-size:.68rem; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:.35rem; }
+    .subsec-title { font-family:'Cormorant Garamond',serif; font-size:clamp(1.75rem,3vw,2.35rem); font-weight:700; color:var(--navy); line-height:1.15; }
+    .subsec-desc { font-size:.88rem; color:var(--muted); margin-top:.35rem; max-width:680px; }
+
+    /* Google Drive-style Slide Deck Attachment Grid */
+    .deck-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+      gap:1.5rem;
+    }
+    .deck-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      text-decoration:none;
+      color:inherit;
+      box-shadow:var(--sh);
+      transition:box-shadow .28s ease, transform .28s ease, border-color .28s ease;
+    }
+    .deck-card:hover {
+      box-shadow:var(--sh2);
+      transform:translateY(-4px);
+      border-color:rgba(184,131,46,.45);
+    }
+    .deck-drive-bar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.6rem;
+      padding:.65rem .95rem;
+      background:#f8f7f4;
+      border-bottom:1px solid var(--border);
+      font-size:.73rem;
+      color:var(--navy);
+    }
+    .deck-drive-file {
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      min-width:0;
+      font-weight:500;
+    }
+    .deck-pdf-badge {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:#d93025;
+      color:#fff;
+      font-size:.58rem;
+      font-weight:700;
+      letter-spacing:.05em;
+      padding:.15rem .38rem;
+      border-radius:4px;
+      flex-shrink:0;
+      line-height:1.1;
+    }
+    .deck-filename {
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:var(--text);
+      font-size:.73rem;
+    }
+    .deck-drive-meta {
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      flex-shrink:0;
+      font-size:.68rem;
+      color:var(--muted);
+      font-weight:500;
+    }
+    .deck-open-icon {
+      width:13px;
+      height:13px;
+      stroke:var(--muted);
+      transition:stroke .2s, transform .2s;
+    }
+    .deck-card:hover .deck-open-icon {
+      stroke:var(--gold);
+      transform:translate(1px, -1px);
+    }
+    .deck-thumb {
+      position:relative;
+      aspect-ratio:16 / 9;
+      background:#efede8;
+      border-bottom:1px solid var(--border);
+      overflow:hidden;
+    }
+    .deck-thumb img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center center;
+      display:block;
+      transition:transform .38s ease;
+    }
+    .deck-thumb.portrait-cover img {
+      object-position:center 16%;
+    }
+    .deck-card:hover .deck-thumb img {
+      transform:scale(1.03);
+    }
+    .deck-thumb-pill {
+      position:absolute;
+      right:.7rem;
+      bottom:.65rem;
+      background:rgba(15,45,82,.86);
+      backdrop-filter:blur(6px);
+      color:#fff;
+      font-size:.66rem;
+      font-weight:500;
+      letter-spacing:.04em;
+      padding:.24rem .62rem;
+      border-radius:100px;
+      opacity:0;
+      transform:translateY(4px);
+      transition:opacity .22s ease, transform .22s ease;
+    }
+    .deck-card:hover .deck-thumb-pill {
+      opacity:1;
+      transform:translateY(0);
+    }
+    .deck-body {
+      padding:1.25rem 1.35rem 1.35rem;
+      display:flex;
+      flex-direction:column;
+      flex:1;
+    }
+    .deck-eyebrow {
+      font-size:.63rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--gold);
+      font-weight:600;
+      margin-bottom:.3rem;
+    }
+    .deck-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.28rem;
+      font-weight:700;
+      color:var(--navy);
+      line-height:1.22;
+      margin-bottom:.25rem;
+    }
+    .deck-sub {
+      font-size:.73rem;
+      color:var(--muted);
+      font-weight:500;
+      margin-bottom:.65rem;
+    }
+    .deck-desc {
+      font-size:.82rem;
+      color:var(--muted);
+      line-height:1.68;
+      margin-bottom:.95rem;
+      flex:1;
+    }
+    .deck-body .project-entry-tags {
+      margin-bottom:0;
+    }
+
     @media(max-width:600px){
       .project-entry { grid-template-columns:1fr; }
       .project-entry-img { height:100px; }
+      .deck-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -50,13 +220,19 @@
 
 <div class="page-header">
   <div class="page-header-inner"><a class="page-breadcrumb" href="../">Home</a>
-    <div class="page-eyebrow">Technical Work</div>
-    <h1 class="page-title">Projects</h1>
-    <p class="page-subtitle">Technical and data projects - code, analysis, and outputs.</p>
+    <div class="page-eyebrow">Technical &amp; Strategy Work</div>
+    <h1 class="page-title">Projects &amp; Case Decks</h1>
+    <p class="page-subtitle">Python data analysis pipelines and strategic slide decks from international case competitions.</p>
   </div>
 </div>
 
 <div class="section">
+
+  <div class="subsec-header rv">
+    <div class="subsec-eyebrow">Data &amp; Code</div>
+    <h2 class="subsec-title">Technical Projects</h2>
+  </div>
+
   <div class="project-list">
 
     <a href="../project-python/" class="project-entry rv rv1">
@@ -66,7 +242,7 @@
       <div class="project-entry-body">
         <div class="project-entry-eyebrow">CFI BIDA Course · 2026</div>
         <div class="project-entry-name">Python Data Analysis</div>
-        <div class="project-entry-meta">4 parts &nbsp;;&nbsp; 10 notebooks &nbsp;·&nbsp; 4 real datasets &nbsp;·&nbsp; 7 chart types</div>
+        <div class="project-entry-meta">4 parts &nbsp;·&nbsp; 10 notebooks &nbsp;·&nbsp; 4 real datasets &nbsp;·&nbsp; 7 chart types</div>
         <p class="project-entry-desc">End-to-end data analysis pipeline built in Jupyter. Covers loading and cleaning raw CSVs, statistical analysis (z-scores, IQR outlier detection, correlation matrices), and visualization with Matplotlib and Seaborn. All notebooks completed by hand.</p>
         <div class="project-entry-tags">
           <span class="project-entry-tag">Python</span>
@@ -77,6 +253,286 @@
           <span class="project-entry-tag">Jupyter</span>
         </div>
         <div class="project-entry-link">View full project &rarr;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="subsec-header rv">
+    <div class="subsec-eyebrow">Case Competitions · 9 Decks</div>
+    <h2 class="subsec-title">Slide Deck Portfolio</h2>
+    <p class="subsec-desc">Selected consulting, finance, and strategy pitch decks across international and university case competitions. Click any attachment card to open the full PDF deck.</p>
+  </div>
+
+  <div class="deck-grid">
+
+    <!-- 1. ACE BTB -->
+    <a class="deck-card rv rv1" href="../assets/decks/ace-btb.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">Big 4 + 1 - ACE BTB.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>60 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/ace-btb.jpg" alt="Big 4 + 1 - ACE BTB cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">ACE Beyond the Books · 2026</div>
+        <div class="deck-title">The Power of Hospitality Beyond the Restaurant</div>
+        <div class="deck-sub">Fenrizzi Hospitality Group Inc. · Team Big 4 + 1</div>
+        <p class="deck-desc">IFRS financial statement restatement, bank covenant stress-testing, commissary overhead reallocation, and ghost kitchen unit economics across 11 Ontario trattorias and 3 Express kitchens.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">IFRS Restatement</span>
+          <span class="project-entry-tag">Covenant Analysis</span>
+          <span class="project-entry-tag">Unit Economics</span>
+          <span class="project-entry-tag">Hospitality</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2. CBS Global -->
+    <a class="deck-card rv rv2" href="../assets/decks/cbs-global.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">CBS_case_presentation.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>15 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/cbs-global.jpg" alt="CBS Global Case Competition cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">CBS Global Case Competition · 2025</div>
+        <div class="deck-title">European Energy: The €1.48B BESS Strategy</div>
+        <div class="deck-sub">European Energy · €300M Equity Allocation Plan</div>
+        <p class="deck-desc">Sequenced 3-year, €300M equity deployment plan to scale Battery Energy Storage Systems across a 60+ GW renewable pipeline, ranked by NPV-per-equity across retrofits, subsidies, and tolling agreements.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Capital Allocation</span>
+          <span class="project-entry-tag">NPV / Equity</span>
+          <span class="project-entry-tag">Energy Storage</span>
+          <span class="project-entry-tag">Go-To-Market</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3. FiveGuys - Moneris -->
+    <a class="deck-card rv rv3" href="../assets/decks/fincomp-fiveguys-moneris.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">FiveGuys_The Strategic Allocation.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>29 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/fincomp-fiveguys-moneris.jpg" alt="FiveGuys The Strategic Allocation cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">UTM IBA FinComp · 2026</div>
+        <div class="deck-title">RBC / BMO &times; Moneris: Strategic Allocation</div>
+        <div class="deck-sub">RBC &amp; BMO Joint Venture · Team FiveGuys</div>
+        <p class="deck-desc">Divestment and capital allocation valuation of Moneris across Canada's $636B payments market, evaluating 100% equity sale, partial divestiture, and retention via 3-year NPV and VRIO frameworks.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">M&amp;A Divestment</span>
+          <span class="project-entry-tag">3-Year NPV</span>
+          <span class="project-entry-tag">Payments</span>
+          <span class="project-entry-tag">VRIO Analysis</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4. UEC Banking Forward -->
+    <a class="deck-card rv rv1" href="../assets/decks/uec-banking-forward.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">UEC BANKING - Team B3.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>26 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/uec-banking-forward.jpg" alt="UEC Banking Team B3 cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">UEC Banking Forward · 2026</div>
+        <div class="deck-title">Banking Forward: FTS Digital Transformation</div>
+        <div class="deck-sub">FTS Financial · Team B3 (JRY Advisory)</div>
+        <p class="deck-desc">Digital transformation roadmap countering fee-free, high-yield fintech disruption under Canada's Bill C-15 framework, combining HQLA reserve discipline with modernized settlement rails.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Digital Banking</span>
+          <span class="project-entry-tag">Fintech Strategy</span>
+          <span class="project-entry-tag">Bill C-15</span>
+          <span class="project-entry-tag">Risk Mitigation</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5. DEMO v2 - Open Canada - Breaking Point -->
+    <a class="deck-card rv rv2" href="../assets/decks/uec-breaking-point.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">DEMO v2 - Open Canada - Breaking Point.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>17 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/uec-breaking-point.jpg" alt="Open Canada Breaking Point cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">UEC Breaking Point · 2026</div>
+        <div class="deck-title">Breaking Down the Walls We Built: Open Canada</div>
+        <div class="deck-sub">Federal Advisory Council on Economic Growth · Demo Team</div>
+        <p class="deck-desc">Macroeconomic productivity agenda addressing Canada's output-per-hour decline relative to the US through interprovincial market integration, credential mobility, and accelerated SME tech adoption.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Economic Policy</span>
+          <span class="project-entry-tag">Productivity Gap</span>
+          <span class="project-entry-tag">Public Strategy</span>
+          <span class="project-entry-tag">Theory of Change</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 6. NextGen_GLC Cadillac -->
+    <a class="deck-card rv rv3" href="../assets/decks/glc-cadillac-f1.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">NextGen_GLC Cadillac.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>22 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/glc-cadillac-f1.jpg" alt="NextGen GLC Cadillac F1 cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">ACE Global Leadership Challenge · 2026</div>
+        <div class="deck-title">A New Face Enters the Race: Cadillac F1</div>
+        <div class="deck-sub">Cadillac Formula 1 Team · Team NextGen</div>
+        <p class="deck-desc">Commercial launch and fan acquisition strategy ahead of Cadillac F1's Australian Grand Prix debut, introducing the gamified "Cadillac Fan Passport Journey" to capture first-party data and de-risk sponsorship.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Commercial Strategy</span>
+          <span class="project-entry-tag">Fan Engagement</span>
+          <span class="project-entry-tag">First-Party Data</span>
+          <span class="project-entry-tag">Formula 1</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 7. Preliminary_IBCCGBF2026_1d4m4n M3rtu4 -->
+    <a class="deck-card rv rv1" href="../assets/decks/itb-ibcc-zurich.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">Preliminary_IBCCGBF2026_1d4m4n M3rtu4.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>8 pages</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb portrait-cover">
+        <img src="../assets/decks/thumbs/itb-ibcc-zurich.jpg" alt="Zurich Tomorrow ITB IBCC cover page" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">ITB IBCC &times; Zurich · Semi-Finalist · 2026</div>
+        <div class="deck-title">Zurich Tomorrow: AI Insurance Workflow</div>
+        <div class="deck-sub">Zurich Indonesia · Team 1D4M4N M3RTU4</div>
+        <p class="deck-desc">End-to-end claims automation integrating n8n workflow orchestration, Medicillin app auto-adjudication for claims under IDR 10M, and "Zee" — an internal RLHF-trained AI assistant layer.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Semi-Finalist</span>
+          <span class="project-entry-tag">AI Workflow</span>
+          <span class="project-entry-tag">InsurTech</span>
+          <span class="project-entry-tag">Claims Automation</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 8. SxCInterSummit2025_IBCC_Semifinal Deck_KucingOyen -->
+    <a class="deck-card rv rv2" href="../assets/decks/sxc-ibcc-linkaja.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">SxCInterSummit2025_IBCC_Semifinal Deck_KucingOyen.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>23 slides</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb">
+        <img src="../assets/decks/thumbs/sxc-ibcc-linkaja.jpg" alt="Transform LinkAja SxC InterSummit cover slide" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">SxC InterSummit IBCC · Semi-Finalist · 2025</div>
+        <div class="deck-title">Transform LinkAja as Indonesia's Digital Life SuperApp</div>
+        <div class="deck-sub">LinkAja (SOE Ecosystem) · Team KucingOyen</div>
+        <p class="deck-desc">SuperApp expansion strategy uniting HIMBARA open-banking APIs, universal BUMN SSO (LinkAja Unitee), AI wealth management, and offline SMS payment rails to bridge rural financial inclusion.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">Semi-Finalist</span>
+          <span class="project-entry-tag">SuperApp Strategy</span>
+          <span class="project-entry-tag">Open Banking</span>
+          <span class="project-entry-tag">Financial Inclusion</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 9. SIBCC_Preleminary_PendakiYagataw -->
+    <a class="deck-card rv rv3" href="../assets/decks/sibcc-sunsilk.pdf" target="_blank" rel="noopener">
+      <div class="deck-drive-bar">
+        <div class="deck-drive-file">
+          <span class="deck-pdf-badge">PDF</span>
+          <span class="deck-filename">SIBCC_Preleminary_PendakiYagataw.pdf</span>
+        </div>
+        <div class="deck-drive-meta">
+          <span>10 pages</span>
+          <svg class="deck-open-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="deck-thumb portrait-cover">
+        <img src="../assets/decks/thumbs/sibcc-sunsilk.jpg" alt="Sunsilk Strategy SIBCC cover page" loading="lazy"/>
+        <span class="deck-thumb-pill">Open PDF &nearr;</span>
+      </div>
+      <div class="deck-body">
+        <div class="deck-eyebrow">ShARE UI SIBCC · 2026</div>
+        <div class="deck-title">Sunsilk Strategy: Reshaping Brand Relevance</div>
+        <div class="deck-sub">Unilever Indonesia · Team Pendaki Yagataw</div>
+        <p class="deck-desc">Value-driven FMCG brand repositioning for Sunsilk in Indonesia's haircare market, combining Porter's Five Forces, STP, Ansoff Matrix, and hair-concern-based retail shelf bundling.</p>
+        <div class="project-entry-tags">
+          <span class="project-entry-tag">FMCG Strategy</span>
+          <span class="project-entry-tag">Brand Positioning</span>
+          <span class="project-entry-tag">STP &amp; Ansoff</span>
+          <span class="project-entry-tag">Retail Execution</span>
+        </div>
       </div>
     </a>
 
